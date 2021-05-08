@@ -40,8 +40,22 @@ void splitPolynomial(char *polynomial, int polyStringLen, char **polynomialTerms
   free(term);
 }
 
-void deriveTerm(char *term) {
+int getCoefficient(char *term, int length) {
 
+}
+
+int getPower(char *term, int length) {
+
+}
+
+void deriveTerm(char *term, int length) {
+	/* Steps:
+	 			1. Find the coefficient of the term
+				2. Find the power of the term
+				3. Then multiply power and coefficient (new coefficient)
+				4. Subtract 1 from power
+				5. Put it all together.
+	*/
 }
 
 int main(int argc, char **argv) {
