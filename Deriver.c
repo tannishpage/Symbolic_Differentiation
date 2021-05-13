@@ -20,7 +20,7 @@
     3. String all of them back together
 */
 
-void splitPolynomial(char *polynomial, int polyStringLen, char **polynomialTerms) {
+int splitPolynomial(char *polynomial, int polyStringLen, char **polynomialTerms) {
   int termNumber = 0;
   int termIndex = 0;
   char *term = malloc(sizeof(char) * 255);
@@ -38,14 +38,40 @@ void splitPolynomial(char *polynomial, int polyStringLen, char **polynomialTerms
   }
   polynomialTerms[termNumber++] = strdup(term);
   free(term);
+  return termNumber;
 }
 
-int getCoefficient(char *term, int length) {
-
+int getCoefficient(char *term, char *variable) {
+  char *coefficient = strtok(strdup(term), variable);
+  if (strcmp(coefficient, term) == 0) {
+    return 0;
+  }
+  return strtol(coefficient, NULL, 10);
 }
 
-int getPower(char *term, int length) {
+/*int getCoefficient(char *term, int length, char variable) {
+	char *coefficient = malloc(sizeof(char) * length);
+	for (int i = 0; i < length; i++) {
+		if (term[i] == variable) {
+			if (i == 0) {
+				return 1;
+			}
+      break;
+		} else {
+      coefficient[i] = term[i];
+    }
+	}
+  // Convert our coefficient string to an integer
+  return strtol(coefficient, NULL, 10);
+}*/
 
+int getPower(char *term) {
+  strtok(strdup(term), "^");
+  char *power = strtok(NULL, "^");
+  if (power == NULL){
+    return 1;
+  }
+  return strtol(power, NULL, 10);
 }
 
 void deriveTerm(char *term, int length) {
@@ -64,9 +90,13 @@ int main(int argc, char **argv) {
     myPoly[i] = malloc(sizeof(char) * 255);
   }
 
-  splitPolynomial(argv[1], strlen(argv[1]), myPoly);
-  for (int i = 0; i < 10; i++) {
-    printf("%s ", myPoly[i]);
+  int numberOfTerms = splitPolynomial(argv[1], strlen(argv[1]), myPoly);
+  for (int i = 0; i < numberOfTerms; i++) {
+    if (strcmp(myPoly[i], "+") != 0 && strcmp(myPoly[i], "-") != 0){
+        printf("Term: %s\t", myPoly[i]);
+        printf("Coefficient: %d\t", getCoefficient(myPoly[i], "x"));
+        printf("Power: %d\n", getPower(myPoly[i]));
+    }
   }
   printf("\n");
 }
