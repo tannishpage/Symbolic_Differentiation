@@ -74,7 +74,7 @@ int getPower(char *term) {
   return strtol(power, NULL, 10);
 }
 
-void deriveTerm(char *term, int length) {
+void deriveTerm(char *term, char *newTerm, char *variable) {
 	/* Steps:
 	 			1. Find the coefficient of the term
 				2. Find the power of the term
@@ -82,6 +82,27 @@ void deriveTerm(char *term, int length) {
 				4. Subtract 1 from power
 				5. Put it all together.
 	*/
+
+  int coefficient = getCoefficient(term, variable);
+  int power = getPower(term);
+
+  int newCoefficient = coefficient * power;
+  int newPower = power - 1;
+  if (newPower == 0) {
+    sprintf(newTerm, "%d", newCoefficient);
+  } else if (newPower == 1) {
+    if (newCoefficient == 0) {
+      sprintf(newTerm, "%d", newCoefficient);
+    } else {
+      sprintf(newTerm, "%d%s", newCoefficient, variable);
+    }
+  } else {
+    if (newCoefficient == 0) {
+      sprintf(newTerm, "%d", newCoefficient);
+    } else {
+      sprintf(newTerm, "%d%s^%d", newCoefficient, variable, newPower);
+    }
+  }
 }
 
 int main(int argc, char **argv) {
@@ -90,13 +111,22 @@ int main(int argc, char **argv) {
     myPoly[i] = malloc(sizeof(char) * 255);
   }
 
+  char **myDerivitive = malloc(sizeof(char*) * 255);
+  for (int i = 0; i < 256; i++) {
+    myDerivitive[i] = malloc(sizeof(char) * 255);
+  }
+
   int numberOfTerms = splitPolynomial(argv[1], strlen(argv[1]), myPoly);
   for (int i = 0; i < numberOfTerms; i++) {
     if (strcmp(myPoly[i], "+") != 0 && strcmp(myPoly[i], "-") != 0){
-        printf("Term: %s\t", myPoly[i]);
-        printf("Coefficient: %d\t", getCoefficient(myPoly[i], "x"));
-        printf("Power: %d\n", getPower(myPoly[i]));
+        deriveTerm(myPoly[i], myDerivitive[i], "x");
+        if (strcmp(myDerivitive[i], "0") != 0) {
+          printf("%s ", myDerivitive[i]);
+        }
+    } else {
+      printf("%s ", myPoly[i]);
     }
   }
   printf("\n");
+  exit(1);
 }
